@@ -14,13 +14,16 @@ jobs:
     runs-on: [self-hosted, docker]
     container:
       image: node:16
+    strategy:
+      matrix:
+        size: [1M, 10M, 20M, 50M]
     steps:
-      - name: Create Large File ($SIZE)
+      - name: Create Large File
         run: |
           mkdir /isolated_build/
           cd /isolated_build/
           # Use /dev/urandom because GitHub actions zips up the build product
-          head -c $SIZE </dev/urandom >test.data
+          head -c ${{ matrix.size }} </dev/urandom >test.data
       - name: Upload Large File
         uses: actions/upload-artifact@v3
         with:
@@ -30,11 +33,14 @@ jobs:
 
   demo_upload_without_container:
     runs-on: [self-hosted, docker]
+    strategy:
+      matrix:
+        size: [1M, 10M, 20M, 30M, 50M]
     steps:
-      - name: Create Large File ($SIZE)
+      - name: Create Large File
         run: |
           # Use /dev/urandom because GitHub actions zips up the build product
-          head -c $SIZE </dev/urandom >test.data
+          head -c ${{ matrix.size }} </dev/urandom >test.data
       - name: Upload Large File
         uses: actions/upload-artifact@v3
         with:

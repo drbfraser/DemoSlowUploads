@@ -9,5 +9,8 @@ This project contains a `.github\workflows` folder which defines a CI/CD pipelin
 
 This repo is setup with an SFU hosted VM to run the CI/CD pipeline build steps. When run on SFU's GitHub server, the times are:
 
-Upload 1M: 
-Download 1M:
+* Upload 20M from a container: 2m15s
+* Upload 20M without a container: 2m30s
+* Download two 20M files: 13s
+
+The tests were re-run using a matrix of different size options:
