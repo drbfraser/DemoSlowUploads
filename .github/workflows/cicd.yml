@@ -17,8 +17,8 @@ jobs:
         run: |
           mkdir /isolated_build/
           cd /isolated_build/
-          # truncate -s 1M test.data    # Creates empty file; gets zipped!
-          head -c 1M </dev/urandom >test.data
+          # truncate -s 100M test.data    # Creates empty file; gets zipped!
+          head -c 100M </dev/urandom >test.data
       - name: Upload Large File
         uses: actions/upload-artifact@v3
         with:
