@@ -6,19 +6,21 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+env:
+  SIZE: 20M
 jobs:
   # Create a large file and upload it to GitHub as a build product
-  demo_upload:
+  demo_upload_from_container:
     runs-on: [self-hosted, docker]
     container:
       image: node:16
     steps:
-      - name: Create Large File
+      - name: Create Large File ($SIZE)
         run: |
           mkdir /isolated_build/
           cd /isolated_build/
           # Use /dev/urandom because GitHub actions zips up the build product
-          head -c 10M </dev/urandom >test.data
+          head -c $SIZE </dev/urandom >test.data
       - name: Upload Large File
         uses: actions/upload-artifact@v3
         with:
@@ -26,14 +28,28 @@ jobs:
           retention-days: 7
           path: /isolated_build/test.data
 
+  demo_upload_without_container:
+    runs-on: [self-hosted, docker]
+    steps:
+      - name: Create Large File ($SIZE)
+        run: |
+          # Use /dev/urandom because GitHub actions zips up the build product
+          head -c $SIZE </dev/urandom >test.data
+      - name: Upload Large File
+        uses: actions/upload-artifact@v3
+        with:
+          name: "${{ github.job }}"
+          retention-days: 7
+          path: test.data
+
   # Download all build products
   demo_download: 
     runs-on: [self-hosted, docker]
-    needs: demo_upload
+    needs: [demo_upload_from_container, demo_upload_without_container]
     container:
       image: node:16
     steps:
       - name: Download all build products
         uses: actions/download-artifact@v3
       - name: Show files
-        run: ls -la
+        run: ls -laR
