@@ -14,3 +14,7 @@ This repo is setup with an SFU hosted VM to run the CI/CD pipeline build steps. 
 * Download two 20M files: 13s
 
 The tests were re-run using a matrix of different size options:
+
+## Investigation
+
+* It's likely not a network speed issue (on the VM side at least) because running the `speedtest-cli --secure` command says download is 934 Mbits/s, and upload is 805 Mbits/s (to FIBRETEL, Vancouver BC).
