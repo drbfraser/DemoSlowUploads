@@ -1,0 +1,35 @@
+name: DemoSlowUploads
+# CI/CD Actions for GitHub to demonstrate how long it takes to upload a build-product
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  # Create a large file and upload it to GitHub as a build product
+  demo_upload:
+    runs-on: [self-hosted, docker]
+    container:
+      image: node:16
+    steps:
+      - name: Create Large File
+        run: truncate -s 1M test.data
+      - name: Upload Large File
+        uses: actions/upload-artifact@v3
+        with:
+          name: "${{ github.job }}"
+          retention-days: 7
+          path: test.data
+
+  # Download all build products
+  demo_download: 
+    runs-on: [self-hosted, docker]
+    needs: demo_upload
+    container:
+      image: node:16
+    steps:
+      - name: Download all build products
+        uses: actions/download-artifact@v3
+      - name: Show files
+        run: ls -la
