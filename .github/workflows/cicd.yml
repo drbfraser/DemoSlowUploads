@@ -16,7 +16,7 @@ jobs:
       image: node:16
     strategy:
       matrix:
-        size: [1M, 10M, 20M, 50M]
+        size: [1M, 2M, 3M, 4M, 5M, 10M, 20M, 30M, 50M]
     steps:
       - name: Create Large File
         run: |
@@ -35,7 +35,7 @@ jobs:
     runs-on: [self-hosted, docker]
     strategy:
       matrix:
-        size: [1M, 10M, 20M, 30M, 50M]
+        size: [1M, 2M, 3M, 4M, 5M, 10M, 20M, 30M, 50M]
     steps:
       - name: Create Large File
         run: |
