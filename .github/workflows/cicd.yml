@@ -14,7 +14,10 @@ jobs:
       image: node:16
     steps:
       - name: Create Large File
-        run: truncate -s 1M test.data
+        run: |
+          mkdir /isolated_build/
+          cd /isolated_build/
+          truncate -s 1M test.data
       - name: Upload Large File
         uses: actions/upload-artifact@v3
         with:
