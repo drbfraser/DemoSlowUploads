@@ -13,7 +13,7 @@ This repo is setup with an SFU hosted VM to run the CI/CD pipeline build steps. 
 * Upload 20M without a container: 2m30s
 * Download two 20M files: 13s
 
-The tests were re-run using a matrix of different size options:
+The tests were re-run using a matrix of different size options. See the `DemoSlowUploads-Results.ods` file for a table of values and graph showing the speed. I note that there are some interesting non-linearities in the data for which I have no explanation; however, the real concern is how slow it is overall. **Overall the test runs, the upload runs at about 5 Mbits/s.**
 
 ## Investigation
 
