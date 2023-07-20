@@ -23,7 +23,7 @@ jobs:
         with:
           name: "${{ github.job }}"
           retention-days: 7
-          path: test.data
+          path: /isolated_build/test.data
 
   # Download all build products
   demo_download: 
