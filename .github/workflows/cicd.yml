@@ -25,7 +25,8 @@ jobs:
           # Use /dev/urandom because GitHub actions zips up the build product
           head -c ${{ matrix.size }} </dev/urandom >test.data
       - name: Upload Large File
-        uses: actions/upload-artifact@v3
+        # uses: actions/upload-artifact@v3
+        uses: bfraser/cicd/actions/upload-artifact@HEAD
         with:
           name: "${{ github.job }}"
           retention-days: 7
