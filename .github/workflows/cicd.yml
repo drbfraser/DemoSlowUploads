@@ -64,8 +64,8 @@ jobs:
 
   demo_cache_upload_from_container:
     runs-on: [self-hosted, docker]
-    container:
-      image: node:16
+    # container:
+    #   image: node:16
     strategy:
       matrix:
         # size: [1M, 2M, 3M, 4M, 5M, 10M, 20M, 30M, 40M, 50M, 100M]
@@ -91,8 +91,8 @@ jobs:
       matrix:
         # size: [1M, 2M, 3M, 4M, 5M, 10M, 20M, 30M, 40M, 50M, 100M]
         size: [10M]
-    container:
-      image: node:16
+    # container:
+    #   image: node:16
     steps:
       - run: mkdir -p /isolated/
       - name: Download cached files
