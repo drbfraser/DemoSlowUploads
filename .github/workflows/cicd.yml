@@ -9,44 +9,44 @@ on:
 env:
   SIZE: 20M
 jobs:
-  # # Create a large file and upload it to GitHub as a build product
-  # demo_upload_from_container:
-  #   runs-on: [self-hosted, docker]
-  #   container:
-  #     image: node:16
-  #   strategy:
-  #     matrix:
-  #       size: [1M, 2M, 3M, 4M, 5M, 10M, 20M, 30M, 40M, 50M, 100M]
-  #   steps:
-  #     - name: Create Large File
-  #       run: |
-  #         mkdir /isolated_build/
-  #         cd /isolated_build/
-  #         # Use /dev/urandom because GitHub actions zips up the build product
-  #         head -c ${{ matrix.size }} </dev/urandom >test.data
-  #     - name: Upload Large File
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: "${{ github.job }}"
-  #         retention-days: 7
-  #         path: /isolated_build/test.data
+  # Create a large file and upload it to GitHub as a build product
+  demo_upload_from_container:
+    runs-on: [self-hosted, docker]
+    container:
+      image: node:16
+    strategy:
+      matrix:
+        size: [1M, 2M, 3M, 4M, 5M, 10M, 20M, 30M, 40M, 50M, 100M]
+    steps:
+      - name: Create Large File
+        run: |
+          mkdir /isolated_build/
+          cd /isolated_build/
+          # Use /dev/urandom because GitHub actions zips up the build product
+          head -c ${{ matrix.size }} </dev/urandom >test.data
+      - name: Upload Large File
+        uses: actions/upload-artifact@v3
+        with:
+          name: "${{ github.job }}"
+          retention-days: 7
+          path: /isolated_build/test.data
 
-  # demo_upload_without_container:
-  #   runs-on: [self-hosted, docker]
-  #   strategy:
-  #     matrix:
-  #       size: [1M, 2M, 3M, 4M, 5M, 10M, 20M, 30M, 40M, 50M, 100M]
-  #   steps:
-  #     - name: Create Large File
-  #       run: |
-  #         # Use /dev/urandom because GitHub actions zips up the build product
-  #         head -c ${{ matrix.size }} </dev/urandom >test.data
-  #     - name: Upload Large File
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: "${{ github.job }}"
-  #         retention-days: 7
-  #         path: test.data
+  demo_upload_without_container:
+    runs-on: [self-hosted, docker]
+    strategy:
+      matrix:
+        size: [1M, 2M, 3M, 4M, 5M, 10M, 20M, 30M, 40M, 50M, 100M]
+    steps:
+      - name: Create Large File
+        run: |
+          # Use /dev/urandom because GitHub actions zips up the build product
+          head -c ${{ matrix.size }} </dev/urandom >test.data
+      - name: Upload Large File
+        uses: actions/upload-artifact@v3
+        with:
+          name: "${{ github.job }}"
+          retention-days: 7
+          path: test.data
 
   # # Download all build products
   # demo_download: 
@@ -62,46 +62,54 @@ jobs:
 
 
 
-  demo_cache_upload_from_container:
-    runs-on: [self-hosted, docker]
-    # container:
-    #   image: node:16
-    strategy:
-      matrix:
-        # size: [1M, 2M, 3M, 4M, 5M, 10M, 20M, 30M, 40M, 50M, 100M]
-        size: [10M]
-    steps:
-      - name: Create Large File
-        run: |
-          mkdir -p isolated_build/
-          cd isolated_build/
-          # Use /dev/urandom because GitHub actions zips up the build product
-          head -c ${{ matrix.size }} </dev/urandom >test.data
-      - name: Cache the file
-        uses: actions/cache@v3
-        with:
-          key: ${{ github.sha }}-${{ matrix.size}}-test.data
-          path: isolated_build/test.data
+
+  # ************************************************
+  # Experiment with using caching
+  # 
+  # However, uploading 10M file to SFU GitHub takes ~1m5s,
+  # similar to standard file upload.
+  # Plus, caching from a VM is not working well.
+  # ************************************************
+  # demo_cache_upload_from_container:
+  #   runs-on: [self-hosted, docker]
+  #   # container:
+  #   #   image: node:16
+  #   strategy:
+  #     matrix:
+  #       # size: [1M, 2M, 3M, 4M, 5M, 10M, 20M, 30M, 40M, 50M, 100M]
+  #       size: [10M]
+  #   steps:
+  #     - name: Create Large File
+  #       run: |
+  #         mkdir -p isolated_build/
+  #         cd isolated_build/
+  #         # Use /dev/urandom because GitHub actions zips up the build product
+  #         head -c ${{ matrix.size }} </dev/urandom >test.data
+  #     - name: Cache the file
+  #       uses: actions/cache@v3
+  #       with:
+  #         key: ${{ github.sha }}-${{ matrix.size}}-test.data
+  #         path: isolated_build/test.data
 
 
-  demo_cache_download_into_container:
-    needs: demo_cache_upload_from_container
-    runs-on: [self-hosted, docker]
-    strategy:
-      matrix:
-        # size: [1M, 2M, 3M, 4M, 5M, 10M, 20M, 30M, 40M, 50M, 100M]
-        size: [10M]
-    # container:
-    #   image: node:16
-    steps:
-      - run: mkdir -p isolated/
-      - name: Download cached files
-        uses: actions/cache@v3
-        with:
-            path: isolated/test
-            key: ${{ github.sha }}-${{ matrix.size}}-test.data
-      - name: Show files is isolated/
-        run: ls -laR isolated/
-      - name: Show files is current folder
-        run: ls -laR .
+  # demo_cache_download_into_container:
+  #   needs: demo_cache_upload_from_container
+  #   runs-on: [self-hosted, docker]
+  #   strategy:
+  #     matrix:
+  #       # size: [1M, 2M, 3M, 4M, 5M, 10M, 20M, 30M, 40M, 50M, 100M]
+  #       size: [10M]
+  #   # container:
+  #   #   image: node:16
+  #   steps:
+  #     - run: mkdir -p isolated/
+  #     - name: Download cached files
+  #       uses: actions/cache@v3
+  #       with:
+  #           path: isolated/test
+  #           key: ${{ github.sha }}-${{ matrix.size}}-test.data
+  #     - name: Show files is isolated/
+  #       run: ls -laR isolated/
+  #     - name: Show files is current folder
+  #       run: ls -laR .
     
