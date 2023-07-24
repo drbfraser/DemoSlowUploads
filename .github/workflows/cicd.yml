@@ -73,15 +73,15 @@ jobs:
     steps:
       - name: Create Large File
         run: |
-          mkdir /isolated_build/
-          cd /isolated_build/
+          mkdir isolated_build/
+          cd isolated_build/
           # Use /dev/urandom because GitHub actions zips up the build product
           head -c ${{ matrix.size }} </dev/urandom >test.data
       - name: Cache the file
         uses: actions/cache@v3
         with:
           key: ${{ github.sha }}-${{ matrix.size}}-test.data
-          path: test.data
+          path: isolated_build/test.data
 
 
   demo_cache_download_into_container:
@@ -94,14 +94,14 @@ jobs:
     # container:
     #   image: node:16
     steps:
-      - run: mkdir -p /isolated/
+      - run: mkdir -p isolated/
       - name: Download cached files
         uses: actions/cache@v3
         with:
-            path: /isolated/test
+            path: isolated/test
             key: ${{ github.sha }}-${{ matrix.size}}-test.data
-      - name: Show files is /isolated/
-        run: ls -laR /isolated/
+      - name: Show files is isolated/
+        run: ls -laR isolated/
       - name: Show files is current folder
         run: ls -laR .
     
