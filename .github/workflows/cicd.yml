@@ -73,7 +73,7 @@ jobs:
     steps:
       - name: Create Large File
         run: |
-          mkdir isolated_build/
+          mkdir -p isolated_build/
           cd isolated_build/
           # Use /dev/urandom because GitHub actions zips up the build product
           head -c ${{ matrix.size }} </dev/urandom >test.data
